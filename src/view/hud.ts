@@ -4,6 +4,7 @@
  */
 
 import * as vscode from 'vscode';
+import * as crypto from 'crypto';
 import * as fs from 'fs';
 import * as path from 'path';
 import { QuotaSnapshot, DashboardConfig, WebviewMessage } from '../shared/types';
@@ -1598,12 +1599,7 @@ export class CockpitHUD {
      * 生成随机 nonce
      */
     private generateNonce(): string {
-        const possible = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-        let nonce = '';
-        for (let i = 0; i < 32; i++) {
-            nonce += possible.charAt(Math.floor(Math.random() * possible.length));
-        }
-        return nonce;
+        return crypto.randomBytes(24).toString('base64url');
     }
 
     /**

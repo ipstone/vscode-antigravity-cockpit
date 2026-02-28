@@ -5,6 +5,7 @@
  */
 
 import * as vscode from 'vscode';
+import * as crypto from 'crypto';
 import * as http from 'http';
 import { URL } from 'url';
 import { OAuthCredential } from './types';
@@ -526,12 +527,7 @@ class OAuthService {
      * 生成状态码
      */
     private generateState(): string {
-        const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-        let state = '';
-        for (let i = 0; i < 32; i++) {
-            state += chars.charAt(Math.floor(Math.random() * chars.length));
-        }
-        return state;
+        return crypto.randomBytes(24).toString('base64url');
     }
 
     private setCallbackHost(host: string): void {
