@@ -302,6 +302,14 @@ class CredentialStorage {
      * 供 Cockpit Tools 导入使用
      */
     private async syncToSharedFile(storage: CredentialsStorage): Promise<void> {
+        // Only export plaintext credentials when the user has explicitly opted in
+        const config = vscode.workspace.getConfiguration('agCockpit');
+        const allowInsecureExport = config.get<boolean>('allowInsecureSharedCredentialExport', false);
+        if (!allowInsecureExport) {
+            logger.debug('[CredentialStorage] Plaintext credential export skipped (allowInsecureSharedCredentialExport is false)');
+            return;
+        }
+
         try {
             const sharedDir = this.getSharedDir();
             
@@ -335,7 +343,7 @@ class CredentialStorage {
             }
             
             fs.writeFileSync(sharedFile, JSON.stringify({ accounts: exportData }, null, 2));
-            logger.debug('[CredentialStorage] Synced to shared file for Cockpit Tools');
+            logger.debug('[CredentialStorage] Synced to shared file for Cockpit Tools (insecure export enabled)');
         } catch (error) {
             // 同步失败不影响主流程
             const err = error instanceof Error ? error : new Error(String(error));
